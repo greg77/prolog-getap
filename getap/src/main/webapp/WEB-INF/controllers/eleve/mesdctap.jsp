@@ -42,7 +42,7 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 0 or dctap.etat == 4 }">
+						<c:if test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
 							<tr>
 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 								<td>${dctap.dateAction}</td>
@@ -84,51 +84,51 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.etat > 1023}">
-							<tr>
-								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
-								<c:if test="${dctap.dateModifiee}">
-									<td class="isUpdate">${dctap.dateAction}</td>
-								</c:if>
-								<c:if test="${!dctap.dateModifiee}">
-									<td>${dctap.dateAction}</td>
-								</c:if>
-								<c:if test="${dctap.dureeModifiee}">
-									<td class="isUpdate"><fmt:formatNumber
-										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
-										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
-								</c:if>
-								<c:if test="${!dctap.dureeModifiee}">
-									<td><fmt:formatNumber
-										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
-										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
-								</c:if>
-								<c:if test="${dctap.apModifiee}">
-									<td class="isUpdate">${dctap.accPers.nom}</td>
-								</c:if>
-								<c:if test="${!dctap.apModifiee}">
-									<td>${dctap.accPers.nom}</td>
-								</c:if>
-								<td><a
-									href="<c:url value="/app/eleve/valid/${dctap.id}" />"><img
-										src="../../images/valid.png" width="24" height="24"
-										onmouseover="this.src='../../images/validHover.png';"
-										onmouseout="this.src='../../images/valid.png';" /> </a>
-								</td>
-								<td><a
-									href="<c:url value="/app/eleve/refuse/${dctap.id}" />"><img
-										src="../../images/refuseModif.png" width="24" height="24"
-										onmouseover="this.src='../../images/refuseModifHover.png';"
-										onmouseout="this.src='../../images/refuseModif.png';" /> </a>
-								</td>
-							</tr>
-						</c:if>
-					</c:forEach>
+<%-- 					<c:forEach items="${mesdctaps}" var="dctap"> --%>
+<%-- 						<c:if test="${dctap.etat > 1023}"> --%>
+<!-- 							<tr> -->
+<%-- 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td> --%>
+<%-- 								<c:if test="${dctap.dateModifiee}"> --%>
+<%-- 									<td class="isUpdate">${dctap.dateAction}</td> --%>
+<%-- 								</c:if> --%>
+<%-- 								<c:if test="${!dctap.dateModifiee}"> --%>
+<%-- 									<td>${dctap.dateAction}</td> --%>
+<%-- 								</c:if> --%>
+<%-- 								<c:if test="${dctap.dureeModifiee}"> --%>
+<%-- 									<td class="isUpdate"><fmt:formatNumber --%>
+<%-- 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
+<%-- 										pattern="#00" />h<fmt:formatNumber --%>
+<%-- 										value="${dctap.minutes%60}" --%>
+<%-- 										pattern="#00" /></td> --%>
+<%-- 								</c:if> --%>
+<%-- 								<c:if test="${!dctap.dureeModifiee}"> --%>
+<%-- 									<td><fmt:formatNumber --%>
+<%-- 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
+<%-- 										pattern="#00" />h<fmt:formatNumber --%>
+<%-- 										value="${dctap.minutes%60}" --%>
+<%-- 										pattern="#00" /></td> --%>
+<%-- 								</c:if> --%>
+<%-- 								<c:if test="${dctap.apModifiee}"> --%>
+<%-- 									<td class="isUpdate">${dctap.accPers.nom}</td> --%>
+<%-- 								</c:if> --%>
+<%-- 								<c:if test="${!dctap.apModifiee}"> --%>
+<%-- 									<td>${dctap.accPers.nom}</td> --%>
+<%-- 								</c:if> --%>
+<!-- 								<td><a -->
+<%-- 									href="<c:url value="/app/eleve/valid/${dctap.id}" />"><img --%>
+<!-- 										src="../../images/valid.png" width="24" height="24" -->
+<!-- 										onmouseover="this.src='../../images/validHover.png';" -->
+<!-- 										onmouseout="this.src='../../images/valid.png';" /> </a> -->
+<!-- 								</td> -->
+<!-- 								<td><a -->
+<%-- 									href="<c:url value="/app/eleve/refuse/${dctap.id}" />"><img --%>
+<!-- 										src="../../images/refuseModif.png" width="24" height="24" -->
+<!-- 										onmouseover="this.src='../../images/refuseModifHover.png';" -->
+<!-- 										onmouseout="this.src='../../images/refuseModif.png';" /> </a> -->
+<!-- 								</td> -->
+<!-- 							</tr> -->
+<%-- 						</c:if> --%>
+<%-- 					</c:forEach> --%>
 				</tbody>
 			</table>
 		</div>
