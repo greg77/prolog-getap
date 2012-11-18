@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.ldv.sio.getap.app.AccPersonalise;
+import org.ldv.sio.getap.app.DVCTAPException;
 import org.ldv.sio.getap.app.DemandeValidationConsoTempsAccPers;
 import org.ldv.sio.getap.app.FormListConsoForProfInter;
 import org.ldv.sio.getap.app.FormListIdDctap;
@@ -115,27 +116,30 @@ public class ProfInterController {
 
 			AccPersonalise acc = manager.getAPById(formDctap.getAccPersId());
 			String accPersNom = acc.getNom();
+			try {
+				if (!dctapForUpdate.getDateAction().equals(
+						formDctap.getDateAction())
+						&& !dctapForUpdate.isDateUpdatedByProf()) {
+					dctapForUpdate.setDateUpdatedByProf();
+				}
+				if (!dctapForUpdate.getMinutes().equals(formDctap.getMinutes())
+						&& !dctapForUpdate.isDureeUpdatedByProf()) {
+					dctapForUpdate.setDureeUpdatedByProf();
+				}
+				if (!dctapForUpdate.getAccPers().getNom().equals(accPersNom)
+						&& !dctapForUpdate.isApUpdatedByProf()) {
+					dctapForUpdate.setAPUpdatedByProf();
+				}
 
-			if (!dctapForUpdate.getDateAction().equals(
-					formDctap.getDateAction())
-					&& !dctapForUpdate.isDateUpdatedByProf()) {
-				dctapForUpdate.setDateUpdatedByProf();
-			}
-			if (!dctapForUpdate.getMinutes().equals(formDctap.getMinutes())
-					&& !dctapForUpdate.isDureeUpdatedByProf()) {
-				dctapForUpdate.setDureeUpdatedByProf();
-			}
-			if (!dctapForUpdate.getAccPers().getNom().equals(accPersNom)
-					&& !dctapForUpdate.isApUpdatedByProf()) {
-				dctapForUpdate.setAPUpdatedByProf();
-			}
+				dctapForUpdate.setDateAction(formDctap.getDateAction());
+				dctapForUpdate.setMinutes(formDctap.getMinutes());
+				dctapForUpdate.setAccPers(manager.getAPById(formDctap
+						.getAccPersId()));
 
-			dctapForUpdate.setDateAction(formDctap.getDateAction());
-			dctapForUpdate.setMinutes(formDctap.getMinutes());
-			dctapForUpdate.setAccPers(manager.getAPById(formDctap
-					.getAccPersId()));
-
-			manager.updateDVCTAP(dctapForUpdate);
+				manager.updateDVCTAP(dctapForUpdate);
+			} catch (DVCTAPException e) {
+				return "redirect:/app/error/405.jsp";
+			}
 
 			return "redirect:/app/prof-intervenant/index";
 		}
@@ -150,11 +154,13 @@ public class ProfInterController {
 		if (dctap.getProf().equals(UtilSession.getUserInSession())
 				&& (dctap.isCreatedOrUpdatedByEleve() || dctap
 						.isUpdatedByProf())) {
-			dctap.setRefusedByProf();
-			System.out.println("deleted");
-			manager.updateDVCTAP(dctap);
-		} else {
-			System.out.println("erreur delete");
+			try {
+				dctap.setRefusedByProf();
+				manager.updateDVCTAP(dctap);
+			} catch (DVCTAPException e) {
+				return "redirect:/app/error/405.jsp";
+			}
+
 		}
 
 		return "redirect:/app/prof-intervenant/index";
@@ -169,8 +175,13 @@ public class ProfInterController {
 		if (dctap.getProf().equals(UtilSession.getUserInSession())
 				&& (dctap.isCreatedOrUpdatedByEleve())
 				&& !(dctap.isDvctapFinal())) {
-			dctap.setValidatedByProf();
-			manager.updateDVCTAP(dctap);
+			try {
+				dctap.setValidatedByProf();
+				manager.updateDVCTAP(dctap);
+			} catch (DVCTAPException e) {
+				return "redirect:/app/error/405.jsp";
+			}
+
 		}
 
 		return "redirect:/app/prof-intervenant/index";

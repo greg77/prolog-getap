@@ -3,6 +3,7 @@ package org.ldv.sio.getap.web;
 import java.util.List;
 
 import org.ldv.sio.getap.app.AccPersonalise;
+import org.ldv.sio.getap.app.DVCTAPException;
 import org.ldv.sio.getap.app.DemandeValidationConsoTempsAccPers;
 import org.ldv.sio.getap.app.FormAjoutDctap;
 import org.ldv.sio.getap.app.FormDemandeConsoTempsAccPers;
@@ -141,26 +142,30 @@ public class ElevesController {
 			DemandeValidationConsoTempsAccPers dctapForUpdate = manager
 					.getDVCTAPById(Long.valueOf(formDctap.getId()));
 			if (dctapForUpdate.isCreatedOrUpdatedByEleve()) {
+				try {
+					AccPersonalise acc = new AccPersonalise(null,
+							formDctap.getAccPersNom(), 1, user.getId());
+					if (manager.getAPById(formDctap.getAccPersId()) != null) {
+						acc = manager.getAPById(formDctap.getAccPersId());
+						dctapForUpdate.setAccPers(manager.getAPById(formDctap
+								.getAccPersId()));
+					} else {
+						manager.addAP(acc);
+						dctapForUpdate.setAccPers(manager.getAPByNom(formDctap
+								.getAccPersNom()));
+					}
 
-				AccPersonalise acc = new AccPersonalise(null,
-						formDctap.getAccPersNom(), 1, user.getId());
-				if (manager.getAPById(formDctap.getAccPersId()) != null) {
-					acc = manager.getAPById(formDctap.getAccPersId());
-					dctapForUpdate.setAccPers(manager.getAPById(formDctap
-							.getAccPersId()));
-				} else {
-					manager.addAP(acc);
-					dctapForUpdate.setAccPers(manager.getAPByNom(formDctap
-							.getAccPersNom()));
+					dctapForUpdate.setDateAction(formDctap.getDateAction());
+					dctapForUpdate.setMinutes(formDctap.getMinutes());
+
+					dctapForUpdate.setProf(manager.getUserById(formDctap
+							.getProfId()));
+					dctapForUpdate.setUpdateByEleve();
+					manager.updateDVCTAP(dctapForUpdate);
+				} catch (DVCTAPException e) {
+					return "redirect:/app/error/405.jsp";
 				}
 
-				dctapForUpdate.setDateAction(formDctap.getDateAction());
-				dctapForUpdate.setMinutes(formDctap.getMinutes());
-
-				dctapForUpdate.setProf(manager.getUserById(formDctap
-						.getProfId()));
-				dctapForUpdate.setUpdateByEleve();
-				manager.updateDVCTAP(dctapForUpdate);
 			}
 
 			return "redirect:/app/eleve/mesdctap";
@@ -239,8 +244,14 @@ public class ElevesController {
 		if (dctap.getEleve().equals(UtilSession.getUserInSession())
 				&& (dctap.isCreatedOrUpdatedByEleve() && dctap
 						.isUpdatedByProf()) && !(dctap.isDvctapFinal())) {
-			dctap.setRefusedByEleve();
-			manager.updateDVCTAP(dctap);
+
+			try {
+				dctap.setRefusedByEleve();
+				manager.updateDVCTAP(dctap);
+			} catch (DVCTAPException e) {
+				return "redirect:/app/error/405.jsp";
+			}
+
 		}
 
 		return "redirect:/app/eleve/mesdctap";
@@ -255,10 +266,15 @@ public class ElevesController {
 		if (dctap.getEleve().equals(UtilSession.getUserInSession())
 				&& dctap.isCreatedOrUpdatedByEleve() && dctap.isUpdatedByProf()
 				&& !(dctap.isDvctapFinal())) {
-			dctap.setValidatedByEleve();
-			manager.updateDVCTAP(dctap);
-		} else
-			return "redirect:/app/error/405.jsp";
+
+			try {
+				dctap.setValidatedByEleve();
+				manager.updateDVCTAP(dctap);
+			} catch (DVCTAPException e) {
+				return "redirect:/app/error/405.jsp";
+			}
+
+		}
 
 		return "redirect:/app/eleve/mesdctap";
 	}

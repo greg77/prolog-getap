@@ -292,12 +292,12 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setCancelledByEleve() {
+	public void setCancelledByEleve() throws DVCTAPException {
 		if (this.isCreatedOrUpdatedByEleve() && !(this.isDvctapFinal())
 				&& !(this.isUpdatedByProf())) {
 
 			this.etat = this.etat | DVCTAP_ANNULEE_PAR_ELEVE;
-
+			logger.info("annulation : " + this.toString());
 		} else {
 			throw new DVCTAPException("annulation par eleve: non effectuée ;");
 		}
@@ -312,10 +312,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setRefusedByProf() {
+	public void setRefusedByProf() throws DVCTAPException {
 		if (this.isCreatedOrUpdatedByEleve() && !(this.isDvctapFinal())
 				&& !(this.isUpdatedByProf())) {
 			this.etat = this.etat | DVCTAP_REFUSEE_PAR_PROF;
+			logger.info("refusée par prof : " + this.toString());
 		} else {
 			throw new DVCTAPException("refusée par prof: non effectuée ;");
 		}
@@ -328,6 +329,7 @@ public class DemandeValidationConsoTempsAccPers {
 
 		// this.etat = this.etat | DVCTAP_CREE;
 		this.etat |= DVCTAP_CREE;
+		logger.info("creation : " + this.toString());
 
 	}
 
@@ -340,19 +342,16 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setUpdateByEleve() {
+	public void setUpdateByEleve() throws DVCTAPException {
 
 		if (this.isCreatedOrUpdatedByEleve() && !(this.isDvctapFinal())
 				&& !(this.isUpdatedByProf())) {
 			System.out.println("plop");
 			this.etat = this.etat | DVCTAP_MODIFIEE_PAR_ELEVE;
+			logger.info("MAJ Eleve : " + this.toString());
 		} else {
 			throw new DVCTAPException("modification par eleve: non effectuée ;");
 		}
-	}
-
-	public void transitionMajEleve() {
-
 	}
 
 	/**
@@ -364,10 +363,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setRefusedByEleve() {
+	public void setRefusedByEleve() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() && this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_REFUSEE_PAR_ELEVE_AFTER_MODIF_PROF;
+			logger.info("refusée par eleve : " + this.toString());
 		} else {
 			throw new DVCTAPException("refusée par eleve: non effectuée ;");
 		}
@@ -386,6 +386,7 @@ public class DemandeValidationConsoTempsAccPers {
 		if ((this.isCreatedOrUpdatedByEleve() && this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_VALIDEE_PAR_ELEVE;
+			logger.info("validée par eleve : " + this.toString());
 		} else {
 			throw new DVCTAPException("validée par eleve: non effectuée ;");
 		}
@@ -400,10 +401,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setDateUpdatedByProf() {
+	public void setDateUpdatedByProf() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() || this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_DATE_MODIFIEE_PAR_PROF;
+			logger.info("MAJ date par prof: " + this.toString());
 		} else {
 			throw new DVCTAPException("date modifiée par prof: non effectuée ;");
 		}
@@ -418,10 +420,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setDureeUpdatedByProf() {
+	public void setDureeUpdatedByProf() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() || this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_DUREE_MODIFIEE_PAR_PROF;
+			logger.info("MAJ duree par prof: " + this.toString());
 		} else {
 			throw new DVCTAPException(
 					"durée modifiée par prof: non effectuée ;");
@@ -437,10 +440,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setAPUpdatedByProf() {
+	public void setAPUpdatedByProf() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() || this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | AP_DE_LA_DVCTAP_MODIFIEE_PAR_PROF;
+			logger.info("MAJ ap par prof: " + this.toString());
 		} else {
 			throw new DVCTAPException("AP modifiée par prof: non effectuée ;");
 		}
@@ -455,10 +459,11 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setValidatedByProf() {
+	public void setValidatedByProf() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() && !(this.isUpdatedByProf()) && !(this
 				.isDvctapFinal()))) {
 			this.etat = this.etat | DVCTAP_VALIDEE_PAR_PROF;
+			logger.info("validee par prof: " + this.toString());
 		} else {
 			throw new DVCTAPException("validée par prof: non effectuée ;");
 		}
