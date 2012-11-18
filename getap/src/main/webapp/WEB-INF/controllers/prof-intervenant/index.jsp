@@ -44,7 +44,7 @@
 		en cours</h5>
 	<div id="accordion">
 		<h3>
-			<a href="#">Demandes reçues (${etat0 + etat4})</a>
+			<a href="#">Demandes reçues (${nbCreatedOrUpdatedByEleve})</a>
 		</h3>
 		<div id="demo">
 			<form:form modelAttribute="formListIdDctap" action="sendId"
@@ -66,7 +66,7 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${listdctaps}" var="dctap">
-							<c:if test="${dctap.etat == 0 or dctap.etat == 4}">
+							<c:if test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
 								<tr>
 									<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
 									<td>${dctap.eleve.classe.nom}</td>
@@ -86,7 +86,7 @@
 											src="../../images/modifValid.png" width="22" height="22"
 											onmouseover="this.src='../../images/modifValidHover.png';"
 											onmouseout="this.src='../../images/modifValid.png';" /> </a></td>
-									<td><a href=""
+									<td><a href="#"
 										onclick="if(confirm('Voulez-vous vraiment refuser cette demande ?')){window.location.href='refuse/${dctap.id}';}"><img
 											src="../../images/suppr.png" width="24" height="24"
 											onmouseover="this.src='../../images/supprHover.png';"
@@ -105,7 +105,7 @@
 		</div>
 		<h3>
 			<a href="#">Demandes en attentes de confirmations par l'élève
-				(${etatsup1000})</a>
+				(${nbUpdatedByProf})</a>
 		</h3>
 		<div id="demo">
 			<form:form modelAttribute="formListIdDctap" action="sendId"
@@ -124,48 +124,48 @@
 						</tr>
 					</thead>
 					<tbody>
-<%-- 						<c:forEach items="${listdctaps}" var="dctap"> --%>
-<%-- 							<c:if test="${dctap.etat>1023}"> --%>
-<!-- 								<tr> -->
-<%-- 									<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td> --%>
-<%-- 									<c:if test="${dctap.dateModifiee}"> --%>
-<%-- 										<td class="isUpdate">${dctap.dateAction}</td> --%>
-<%-- 									</c:if> --%>
-<%-- 									<c:if test="${!dctap.dateModifiee}"> --%>
-<%-- 										<td>${dctap.dateAction}</td> --%>
-<%-- 									</c:if> --%>
-<%-- 									<c:if test="${dctap.dureeModifiee}"> --%>
-<%-- 										<td class="isUpdate"><fmt:formatNumber --%>
-<%-- 												value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
-<%-- 												pattern="#00" />h<fmt:formatNumber --%>
-<%-- 												value="${dctap.minutes%60}" pattern="#00" /></td> --%>
-<%-- 									</c:if> --%>
-<%-- 									<c:if test="${!dctap.dureeModifiee}"> --%>
-<%-- 										<td><fmt:formatNumber --%>
-<%-- 												value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
-<%-- 												pattern="#00" />h<fmt:formatNumber --%>
-<%-- 												value="${dctap.minutes%60}" pattern="#00" /></td> --%>
-<%-- 									</c:if> --%>
-<%-- 									<c:if test="${dctap.apModifiee}"> --%>
-<%-- 										<td class="isUpdate">${dctap.accPers.nom}</td> --%>
-<%-- 									</c:if> --%>
-<%-- 									<c:if test="${!dctap.apModifiee}"> --%>
-<%-- 										<td>${dctap.accPers.nom}</td> --%>
-<%-- 									</c:if> --%>
-<!-- 									<td><a -->
-<%-- 										href="<c:url value="/app/prof-intervenant/edit?id=${dctap.id}" />"><img --%>
-<!-- 											src="../../images/modifValid.png" width="22" height="22" -->
-<!-- 											onmouseover="this.src='../../images/modifValidHover.png';" -->
-<!-- 											onmouseout="this.src='../../images/modifValid.png';" /> </a></td> -->
-<!-- 									<td><a href="" -->
-<%-- 										onclick="if(confirm('Voulez-vous vraiment refuser cette demande ?')){window.location.href='refuse/${dctap.id}';}"><img --%>
-<!-- 											src="../../images/suppr.png" width="24" height="24" -->
-<!-- 											onmouseover="this.src='../../images/supprHover.png';" -->
-<!-- 											onmouseout="this.src='../../images/suppr.png';" /> </a></td> -->
-<%-- 									<td><input type="checkbox" name="ids" value="${dctap.id}" /></td> --%>
-<!-- 								</tr> -->
-<%-- 							</c:if> --%>
-<%-- 						</c:forEach> --%>
+						<c:forEach items="${listdctaps}" var="dctap">
+							<c:if test="${dctap.updatedByProf}">
+								<tr>
+									<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
+									<c:if test="${dctap.dateUpdatedByProf}">
+										<td class="isUpdate">${dctap.dateAction}</td>
+									</c:if>
+									<c:if test="${!dctap.dateUpdatedByProf}">
+										<td>${dctap.dateAction}</td>
+									</c:if>
+									<c:if test="${dctap.dureeUpdatedByProf}">
+										<td class="isUpdate"><fmt:formatNumber
+												value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
+												pattern="#00" />h<fmt:formatNumber
+												value="${dctap.minutes%60}" pattern="#00" /></td>
+									</c:if>
+									<c:if test="${!dctap.dureeUpdatedByProf}">
+										<td><fmt:formatNumber
+												value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
+												pattern="#00" />h<fmt:formatNumber
+												value="${dctap.minutes%60}" pattern="#00" /></td>
+									</c:if>
+									<c:if test="${dctap.apUpdatedByProf}">
+										<td class="isUpdate">${dctap.accPers.nom}</td>
+									</c:if>
+									<c:if test="${!dctap.apUpdatedByProf}">
+										<td>${dctap.accPers.nom}</td>
+									</c:if>
+									<td><a
+										href="<c:url value="/app/prof-intervenant/edit?id=${dctap.id}" />"><img
+											src="../../images/modifValid.png" width="22" height="22"
+											onmouseover="this.src='../../images/modifValidHover.png';"
+											onmouseout="this.src='../../images/modifValid.png';" /> </a></td>
+									<td><a href="#"
+										onclick="if(confirm('Voulez-vous vraiment refuser cette demande ?')){window.location.href='refuse/${dctap.id}';}"><img
+											src="../../images/suppr.png" width="24" height="24"
+											onmouseover="this.src='../../images/supprHover.png';"
+											onmouseout="this.src='../../images/suppr.png';" /> </a></td>
+									<td><input type="checkbox" name="ids" value="${dctap.id}" /></td>
+								</tr>
+							</c:if>
+						</c:forEach>
 					</tbody>
 				</table>
 				<div style="text-align: right;">
@@ -177,7 +177,7 @@
 	<h5>Demandes de validation terminées</h5>
 	<div id="accordion2">
 		<h3>
-			<a href="#">Demandes validées (${etat1 + etat32})</a>
+			<a href="#">Demandes validées (${nbValidated})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -191,7 +191,7 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${listdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 1 or dctap.etat == 32}">
+						<c:if test="${dctap.createdOrUpdatedByEleve && (dctap.dvctapFinal) && (dctap.validatedByProf)}">
 							<tr>
 								<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
 								<td>${dctap.dateAction}</td>
@@ -208,7 +208,7 @@
 		</div>
 		<h3>
 			<a href="#">Demandes refusées par l'élève après modification de
-				votre part (${etat2})</a>
+				votre part (${nbRefusedByEleve})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -222,7 +222,7 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${listdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 2}">
+						<c:if test="${dctap.createdOrUpdatedByEleve && (dctap.dvctapFinal) && (dctap.refusedByEleve)}">
 							<tr>
 								<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
 								<td>${dctap.dateAction}</td>
@@ -238,7 +238,7 @@
 			</table>
 		</div>
 		<h3>
-			<a href="#">Vos demandes refusées (${etat64})</a>
+			<a href="#">Vos demandes refusées (${nbRefusedByProf})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -252,7 +252,7 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${listdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 64}">
+						<c:if test="${dctap.createdOrUpdatedByEleve && (dctap.dvctapFinal) && (dctap.refusedByProf)}">
 							<tr>
 								<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
 								<td>${dctap.dateAction}</td>

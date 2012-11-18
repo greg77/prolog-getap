@@ -161,15 +161,66 @@ public class AdminController {
 		model.addAttribute("sesDCTAPprof",
 				manager.getAllDVCTAPByProfInterv(user));
 		Long idUser = user.getId();
-		model.addAttribute("etat0", manager.getAllDVCTAPByEtat(0, idUser));
-		model.addAttribute("etat1", manager.getAllDVCTAPByEtat(1, idUser));
-		model.addAttribute("etat2", manager.getAllDVCTAPByEtat(2, idUser));
-		model.addAttribute("etat4", manager.getAllDVCTAPByEtat(4, idUser));
-		model.addAttribute("etat8", manager.getAllDVCTAPByEtat(8, idUser));
-		model.addAttribute("etat32", manager.getAllDVCTAPByEtat(32, idUser));
-		model.addAttribute("etat64", manager.getAllDVCTAPByEtat(64, idUser));
-		model.addAttribute("etatsup1000",
-				manager.getAllDVCTAPModifByEtat(idUser));
+		System.out.println("role: " + user.getRole());
+		int nbCreatedOrUpdatedByEleve = 0;
+		int nbUpdatedByProf = 0;
+		int nbValidated = 0;
+		int nbRefusedByProf = 0;
+		int nbRefusedByEleve = 0;
+		int nbCancelledByEleve = 0;
+		if (user.getRole().equals("prof-intervenant")
+				|| user.getRole().equals("prof-principal")) {
+			List<DemandeValidationConsoTempsAccPers> listDvctapProf = manager
+					.getAllDVCTAPByProfInterv(user);
+			for (DemandeValidationConsoTempsAccPers dctap : listDvctapProf) {
+
+				if (dctap.isCreatedOrUpdatedByEleve()
+						&& !(dctap.isDvctapFinal())
+						&& !(dctap.isUpdatedByProf()))
+					nbCreatedOrUpdatedByEleve++;
+				else if (dctap.isUpdatedByProf() && !(dctap.isDvctapFinal()))
+					nbUpdatedByProf++;
+				else if ((dctap.isDvctapFinal())
+						&& (dctap.isValidatedByProf() || dctap
+								.isValidatedByEleve()))
+					nbValidated++;
+				else if (dctap.isDvctapFinal() && dctap.isRefusedByProf())
+					nbRefusedByProf++;
+				else if (dctap.isDvctapFinal() && dctap.isRefusedByEleve())
+					nbRefusedByEleve++;
+
+			}
+		} else if (user.getRole().equals("eleve")) {
+			List<DemandeValidationConsoTempsAccPers> listDvctapEleve = manager
+					.getAllDVCTAPByEleve(user);
+			for (DemandeValidationConsoTempsAccPers dctap : listDvctapEleve) {
+				if (dctap.isCreatedOrUpdatedByEleve()
+						&& !(dctap.isDvctapFinal())
+						&& !(dctap.isUpdatedByProf()))
+					nbCreatedOrUpdatedByEleve++;
+				else if (dctap.isUpdatedByProf() && !(dctap.isDvctapFinal()))
+					nbUpdatedByProf++;
+				else if ((dctap.isDvctapFinal())
+						&& (dctap.isValidatedByProf() || dctap
+								.isValidatedByEleve()))
+					nbValidated++;
+				else if (dctap.isDvctapFinal() && dctap.isRefusedByProf())
+					nbRefusedByProf++;
+				else if (dctap.isDvctapFinal() && dctap.isRefusedByEleve())
+					nbRefusedByEleve++;
+				else if (dctap.isDvctapFinal() && dctap.isCancelledByEleve())
+					nbCancelledByEleve++;
+
+			}
+		}
+
+		model.addAttribute("nbCreatedOrUpdatedByEleve",
+				nbCreatedOrUpdatedByEleve);
+		model.addAttribute("nbUpdatedByProf", nbUpdatedByProf);
+		model.addAttribute("nbValidated", nbValidated);
+		model.addAttribute("nbRefusedByProf", nbRefusedByProf);
+		model.addAttribute("nbRefusedByEleve", nbRefusedByEleve);
+		model.addAttribute("nbCancelledByEleve", nbCancelledByEleve);
 
 		return "admin/detailUser";
 	}
@@ -532,7 +583,8 @@ public class AdminController {
 	public void exportStats(@PathVariable String id,
 			HttpServletResponse response) {
 		User user = manager.getUserById(Long.valueOf(id));
-		List<DemandeValidationConsoTempsAccPers> dctap = manager.getAllDVCTAPByEleve(user);
+		List<DemandeValidationConsoTempsAccPers> dctap = manager
+				.getAllDVCTAPByEleve(user);
 		response.setContentType("application/pdf");
 		response.setHeader("Content-Disposition", "attachment;filename=stats"
 				+ user.getNom() + ".pdf");
@@ -543,7 +595,8 @@ public class AdminController {
 	public void exportDemandeCsv(@PathVariable String id,
 			HttpServletResponse response) {
 		User user = manager.getUserById(Long.valueOf(id));
-		List<DemandeValidationConsoTempsAccPers> dctap = manager.getAllDVCTAPByEleve(user);
+		List<DemandeValidationConsoTempsAccPers> dctap = manager
+				.getAllDVCTAPByEleve(user);
 		response.setContentType("application/csv");
 		response.setHeader("Content-Disposition",
 				"attachment;filename=demandes" + user.getNom() + ".csv");

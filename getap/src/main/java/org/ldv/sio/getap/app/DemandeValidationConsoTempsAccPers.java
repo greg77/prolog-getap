@@ -2,6 +2,9 @@ package org.ldv.sio.getap.app;
 
 import java.sql.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Demande de validation d'un temps d'accompagnement personnalisé
  * 
@@ -22,7 +25,8 @@ public class DemandeValidationConsoTempsAccPers {
 	private static final int DVCTAP_DATE_MODIFIEE_PAR_PROF = 1024;
 	private static final int DVCTAP_DUREE_MODIFIEE_PAR_PROF = 2048;
 	private static final int AP_DE_LA_DVCTAP_MODIFIEE_PAR_PROF = 4096;
-
+	private final Logger logger = LoggerFactory
+			.getLogger(DemandeValidationConsoTempsAccPers.class);
 	/**
 	 * Identifiant de la DCTAP
 	 */
@@ -347,6 +351,10 @@ public class DemandeValidationConsoTempsAccPers {
 		}
 	}
 
+	public void transitionMajEleve() {
+
+	}
+
 	/**
 	 * Refusée par l'eleve
 	 * 
@@ -374,7 +382,7 @@ public class DemandeValidationConsoTempsAccPers {
 	 * 
 	 */
 
-	public void setValidatedByEleve() {
+	public void setValidatedByEleve() throws DVCTAPException {
 		if ((this.isCreatedOrUpdatedByEleve() && this.isUpdatedByProf())
 				&& !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_VALIDEE_PAR_ELEVE;
@@ -545,7 +553,7 @@ public class DemandeValidationConsoTempsAccPers {
 	 * @return booleen qui retourne si AP a été modifiée par prof
 	 */
 
-	public boolean isAPUpdatedByProf() {
+	public boolean isApUpdatedByProf() {
 		Boolean bool = (this.etat & AP_DE_LA_DVCTAP_MODIFIEE_PAR_PROF) == AP_DE_LA_DVCTAP_MODIFIEE_PAR_PROF;
 
 		return bool;
@@ -582,7 +590,7 @@ public class DemandeValidationConsoTempsAccPers {
 	public boolean isUpdatedByProf() {
 
 		Boolean bool = (this.isDateUpdatedByProf()
-				|| this.isDureeUpdatedByProf() || this.isAPUpdatedByProf());
+				|| this.isDureeUpdatedByProf() || this.isApUpdatedByProf());
 
 		// System.out.println("updated par prof:"+bool);
 		return bool;

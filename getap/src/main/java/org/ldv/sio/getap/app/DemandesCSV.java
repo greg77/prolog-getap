@@ -31,7 +31,9 @@ public class DemandesCSV {
 			PrintWriter writer = response.getWriter();
 			writer.println("Année scolaire;Date;Temps;Etat;Professeur;Eleve;Type d'accompagnement");
 			for (int i = 0; i < dctap.size(); i++) {
-				if (dctap.get(i).getEtat() == 1 || dctap.get(i).getEtat() == 32) {
+				if (dctap.get(i).isDvctapFinal()
+						&& (dctap.get(i).isValidatedByEleve() || dctap.get(i)
+								.isValidatedByProf())) {
 					writer.append(dctap.get(i).getAnneeScolaire() + ";");
 					writer.append(dctap.get(i).getDateAction() + ";");
 					writer.append(dctap.get(i).getMinutes() + ";");
@@ -45,8 +47,10 @@ public class DemandesCSV {
 				}
 			}
 			for (int i = 0; i < dctap.size(); i++) {
-				if (dctap.get(i).getEtat() == 2 || dctap.get(i).getEtat() == 8
-						|| dctap.get(i).getEtat() == 64) {
+				if (dctap.get(i).isDvctapFinal()
+						&& (dctap.get(i).isCancelledByEleve()
+								|| dctap.get(i).isRefusedByProf() || dctap.get(
+								i).isRefusedByEleve())) {
 					writer.append(dctap.get(i).getAnneeScolaire() + ";");
 					writer.append(dctap.get(i).getDateAction() + ";");
 					writer.append(dctap.get(i).getMinutes() + ";");
@@ -60,8 +64,8 @@ public class DemandesCSV {
 				}
 			}
 			for (int i = 0; i < dctap.size(); i++) {
-				if (dctap.get(i).getEtat() == 0 || dctap.get(i).getEtat() == 4
-						|| dctap.get(i).getEtat() > 1023) {
+				if ((dctap.get(i).isCreatedOrUpdatedByEleve() || dctap.get(i)
+						.isUpdatedByProf()) && !(dctap.get(i).isDvctapFinal())) {
 					writer.append(dctap.get(i).getAnneeScolaire() + ";");
 					writer.append(dctap.get(i).getDateAction() + ";");
 					writer.append(dctap.get(i).getMinutes() + ";");

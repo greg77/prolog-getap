@@ -2,7 +2,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<c:if test="${etat==8192}">
+<c:if test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
 	<h3 class="titre3">Modifier ma Demande</h3>
 	
 	<form:form modelAttribute="formDemandeConsoTempsAccPers" action="doedit"

@@ -11,7 +11,7 @@
 <h3 class="titre3">Détail des demandes de ${utilisateur.nom} ${utilisateur.prenom}</h3>
 <div id="accordion">
 	<h3>
-		<a href="#">Demandes Validées (${etat1 + etat32})</a>
+		<a href="#">Demandes Validées (${nbValidated})</a>
 	</h3>
 	<table class="display dataTable">
 		<thead>
@@ -25,7 +25,7 @@
 		<tbody>
 			<c:forEach items="${sesDCTAPeleve}" var="dctap">
 				<c:set var="timeTT" value="${timeTT + dctap.minutes}" />
-				<c:if test="${dctap.etat == 1 || dctap.etat == 32 }">
+				<c:if test="${dctap.createdOrUpdatedByEleve && (dctap.dvctapFinal) && (dctap.validatedByProf || dctap.validatedByEleve)}">
 					<tr>
 						<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 						<td>${dctap.accPers.nom}</td>
@@ -49,7 +49,7 @@
 		</script>
 
 	<h3>
-		<a href="#">Demandes Refusées (${etat2 + etat8 + etat64})</a>
+		<a href="#">Demandes Refusées (${nbRefusedByProf + nbRefusedByEleve + nbCancelledByEleve})</a>
 	</h3>
 	<table class="display dataTable">
 		<thead>
@@ -64,7 +64,7 @@
 		<tbody>
 			<c:forEach items="${sesDCTAPeleve}" var="dctap">
 				<c:if
-					test="${dctap.etat == 2 || dctap.etat == 64 || dctap.etat == 8}">
+					test="${dctap.createdOrUpdatedByEleve && (dctap.dvctapFinal) && (dctap.cancelledByEleve || dctap.refusedByProf || dctap.refusedByEleve)}">
 					<tr>
 						<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 						<td>${dctap.accPers.nom}</td>
@@ -74,13 +74,13 @@
 										value="${dctap.minutes%60}"
 										pattern="#00" /></td>
 						<td>${dctap.dateAction}</td>
-						<c:if test="${dctap.etat == 2}">
+						<c:if test="${dctap.refusedByEleve}">
 							<td>Refus élève</td>
 						</c:if>
-						<c:if test="${dctap.etat == 8}">
+						<c:if test="${dctap.cancelledByEleve}">
 							<td>Annulé</td>
 						</c:if>
-						<c:if test="${dctap.etat == 64}">
+						<c:if test="${dctap.refusedByProf}">
 							<td>Refus prof</td>
 						</c:if>
 					</tr>
@@ -90,7 +90,7 @@
 		</tbody>
 	</table>
 	<h3>
-		<a href="#">Demandes en Cours (${etat0 + etat4 + etatsup1000})</a>
+		<a href="#">Demandes en Cours (${nbCreatedOrUpdatedByEleve})</a>
 	</h3>
 	<table class="display dataTable">
 		<thead>
@@ -104,7 +104,7 @@
 		<tbody>
 			<c:forEach items="${sesDCTAPeleve}" var="dctap">
 				<c:if
-					test="${dctap.etat == 0 || dctap.etat == 4 || dctap.etat > 1023 }">
+					test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
 					<tr>
 						<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 						<td>${dctap.accPers.nom}</td>

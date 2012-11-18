@@ -10,7 +10,9 @@
 			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
 		</layout>
 	</appender>
-
+	<logger name="org.ldv.sio.getap.app">
+		<level value="info" />
+	</logger>
 	<!-- Application logger -->
 	<logger name="getap">
 		<level value="debug" />

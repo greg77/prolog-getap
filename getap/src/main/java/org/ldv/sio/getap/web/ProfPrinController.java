@@ -2,6 +2,7 @@ package org.ldv.sio.getap.web;
 
 import java.util.List;
 
+import org.ldv.sio.getap.app.DemandeValidationConsoTempsAccPers;
 import org.ldv.sio.getap.app.User;
 import org.ldv.sio.getap.app.UserSearchCriteria;
 import org.ldv.sio.getap.app.service.IFManagerGeTAP;
@@ -73,22 +74,44 @@ public class ProfPrinController {
 				Long idUser = user.getId();
 				model.addAttribute("sesDCTAPeleve",
 						manager.getAllDVCTAPByEleve(user));
-				model.addAttribute("etat0",
-						manager.getAllDVCTAPByEtat(0, idUser));
-				model.addAttribute("etat1",
-						manager.getAllDVCTAPByEtat(1, idUser));
-				model.addAttribute("etat2",
-						manager.getAllDVCTAPByEtat(2, idUser));
-				model.addAttribute("etat4",
-						manager.getAllDVCTAPByEtat(4, idUser));
-				model.addAttribute("etat8",
-						manager.getAllDVCTAPByEtat(8, idUser));
-				model.addAttribute("etat32",
-						manager.getAllDVCTAPByEtat(32, idUser));
-				model.addAttribute("etat64",
-						manager.getAllDVCTAPByEtat(64, idUser));
-				model.addAttribute("etatsup1000",
-						manager.getAllDVCTAPModifByEtat(idUser));
+				int nbCreatedOrUpdatedByEleve = 0;
+				int nbUpdatedByProf = 0;
+				int nbValidated = 0;
+				int nbRefusedByProf = 0;
+				int nbRefusedByEleve = 0;
+				int nbCancelledByEleve = 0;
+
+				List<DemandeValidationConsoTempsAccPers> listDvctapProf = manager
+						.getAllDVCTAPByEleve(user);
+				for (DemandeValidationConsoTempsAccPers dctap : listDvctapProf) {
+
+					if (dctap.isCreatedOrUpdatedByEleve()
+							&& !(dctap.isDvctapFinal())
+							&& !(dctap.isUpdatedByProf()))
+						nbCreatedOrUpdatedByEleve++;
+					else if (dctap.isUpdatedByProf()
+							&& !(dctap.isDvctapFinal()))
+						nbUpdatedByProf++;
+					else if ((dctap.isDvctapFinal())
+							&& (dctap.isValidatedByProf() || dctap
+									.isValidatedByEleve()))
+						nbValidated++;
+					else if (dctap.isDvctapFinal() && dctap.isRefusedByProf())
+						nbRefusedByProf++;
+					else if (dctap.isDvctapFinal() && dctap.isRefusedByEleve())
+						nbRefusedByEleve++;
+					else if (dctap.isDvctapFinal()
+							&& dctap.isCancelledByEleve())
+						nbRefusedByEleve++;
+				}
+
+				model.addAttribute("nbCreatedOrUpdatedByEleve",
+						nbCreatedOrUpdatedByEleve);
+				model.addAttribute("nbUpdatedByProf", nbUpdatedByProf);
+				model.addAttribute("nbValidated", nbValidated);
+				model.addAttribute("nbRefusedByProf", nbRefusedByProf);
+				model.addAttribute("nbRefusedByEleve", nbRefusedByEleve);
+				model.addAttribute("nbCancelledByEleve", nbCancelledByEleve);
 				return "prof-principal/detailUser";
 			}
 		}

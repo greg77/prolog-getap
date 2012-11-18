@@ -84,16 +84,17 @@ public class StatsPDF {
 				int timeTT = 0, timeVal = 0, timeAtt = 0, timeRef = 0;
 				for (int i = 0; i < dctap.size(); i++) {
 					timeTT += dctap.get(i).getMinutes();
-					if (dctap.get(i).getEtat() == 1
-							|| dctap.get(i).getEtat() == 32) {
+					if ((dctap.get(i).isValidatedByEleve() || dctap.get(i)
+							.isValidatedByProf())
+							&& dctap.get(i).isDvctapFinal()) {
 						timeVal += dctap.get(i).getMinutes();
-					} else if (dctap.get(i).getEtat() == 2
-							|| dctap.get(i).getEtat() == 8
-							|| dctap.get(i).getEtat() == 64) {
+					} else if ((dctap.get(i).isCancelledByEleve()
+							|| dctap.get(i).isRefusedByEleve() || dctap.get(i)
+							.isRefusedByProf()) && dctap.get(i).isDvctapFinal()) {
 						timeRef += dctap.get(i).getMinutes();
-					} else if (dctap.get(i).getEtat() == 0
-							|| dctap.get(i).getEtat() == 4
-							|| dctap.get(i).getEtat() > 1023) {
+					} else if ((dctap.get(i).isCreatedOrUpdatedByEleve() || dctap
+							.get(i).isUpdatedByProf())
+							|| !(dctap.get(i).isDvctapFinal())) {
 						timeAtt += dctap.get(i).getMinutes();
 					}
 

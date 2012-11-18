@@ -1,5 +1,7 @@
 package org.ldv.sio.getap.web;
 
+import java.util.List;
+
 import org.ldv.sio.getap.app.AccPersonalise;
 import org.ldv.sio.getap.app.DemandeValidationConsoTempsAccPers;
 import org.ldv.sio.getap.app.FormAjoutDctap;
@@ -47,15 +49,34 @@ public class ElevesController {
 		User me = UtilSession.getUserInSession();
 		model.addAttribute("mesdctaps", manager.getAllDVCTAPByEleve(me));
 		Long id = me.getId();
-		model.addAttribute("etat0", manager.getAllDVCTAPByEtat(0, id));
-		model.addAttribute("etat1", manager.getAllDVCTAPByEtat(1, id));
-		model.addAttribute("etat2", manager.getAllDVCTAPByEtat(2, id));
-		model.addAttribute("etat4", manager.getAllDVCTAPByEtat(4, id));
+		List<DemandeValidationConsoTempsAccPers> listDvctap = manager
+				.getAllDVCTAPByEleve(me);
+		int nbCreatedOrUpdatedByEleve = 0;
+		int nbUpdatedByProf = 0;
+		int nbValidated = 0;
+		int nbRefusedByProf = 0;
+		int nbRefusedByEleve = 0;
+		for (DemandeValidationConsoTempsAccPers dctap : listDvctap) {
+			if (dctap.isCreatedOrUpdatedByEleve() && !(dctap.isDvctapFinal())
+					&& !(dctap.isUpdatedByProf()))
+				nbCreatedOrUpdatedByEleve++;
+			else if (dctap.isUpdatedByProf() && !(dctap.isDvctapFinal()))
+				nbUpdatedByProf++;
+			else if ((dctap.isDvctapFinal())
+					&& (dctap.isValidatedByProf() || dctap.isValidatedByEleve()))
+				nbValidated++;
+			else if (dctap.isDvctapFinal() && dctap.isRefusedByProf())
+				nbRefusedByProf++;
+			else if (dctap.isDvctapFinal() && dctap.isRefusedByEleve())
+				nbRefusedByEleve++;
 
-		model.addAttribute("etat16", manager.getAllDVCTAPByEtat(16, id));
-		model.addAttribute("etat32", manager.getAllDVCTAPByEtat(32, id));
-		model.addAttribute("etat64", manager.getAllDVCTAPByEtat(64, id));
-		model.addAttribute("etatsup1000", manager.getAllDVCTAPModifByEtat(id));
+		}
+		model.addAttribute("nbCreatedOrUpdatedByEleve",
+				nbCreatedOrUpdatedByEleve);
+		model.addAttribute("nbUpdatedByProf", nbUpdatedByProf);
+		model.addAttribute("nbValidated", nbValidated);
+		model.addAttribute("nbRefusedByProf", nbRefusedByProf);
+		model.addAttribute("nbRefusedByEleve", nbRefusedByEleve);
 
 		return "eleve/mesdctap";
 	}
@@ -97,10 +118,9 @@ public class ElevesController {
 		formDctap.setAccPersId(currentDctap.getAccPers().getId());
 		formDctap.setMinutes(currentDctap.getMinutes());
 		model.addAttribute("minute", currentDctap.getMinutes());
-
+		model.addAttribute("dctap", manager.getDVCTAPById(formDctap.getId()));
 		model.addAttribute("lesProfs", manager.getAllProf());
-		model.addAttribute("etat", manager.getDVCTAPById(formDctap.getId())
-				.getEtat());
+
 		model.addAttribute("lesAP", manager.getAllAPForEleve());
 		return "eleve/edit";
 	}
@@ -120,7 +140,7 @@ public class ElevesController {
 			User user = UtilSession.getUserInSession();
 			DemandeValidationConsoTempsAccPers dctapForUpdate = manager
 					.getDVCTAPById(Long.valueOf(formDctap.getId()));
-			if (dctapForUpdate.isEtatInitial() || dctapForUpdate.getEtat() == 4) {
+			if (dctapForUpdate.isCreatedOrUpdatedByEleve()) {
 
 				AccPersonalise acc = new AccPersonalise(null,
 						formDctap.getAccPersNom(), 1, user.getId());
@@ -201,6 +221,7 @@ public class ElevesController {
 			dctap.setMinutes(formAjout.getMinutes());
 			dctap.setProf(manager.getUserById(formAjout.getProfId()));
 			dctap.setEleve(manager.getUserById(formAjout.getEleveId()));
+			dctap.setCreatedByEleve();
 			dctap.setAccPers(acc);
 			dctap.setCreatedByEleve();
 			manager.addDVCTAP(dctap);
@@ -236,7 +257,8 @@ public class ElevesController {
 				&& !(dctap.isDvctapFinal())) {
 			dctap.setValidatedByEleve();
 			manager.updateDVCTAP(dctap);
-		}
+		} else
+			return "redirect:/app/error/405.jsp";
 
 		return "redirect:/app/eleve/mesdctap";
 	}

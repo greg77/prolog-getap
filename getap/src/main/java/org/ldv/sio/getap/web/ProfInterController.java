@@ -1,5 +1,7 @@
 package org.ldv.sio.getap.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.ldv.sio.getap.app.AccPersonalise;
@@ -44,8 +46,8 @@ public class ProfInterController {
 
 		DemandeValidationConsoTempsAccPers currentDctap = manager
 				.getDVCTAPById(Long.valueOf(id));
-		if (currentDctap.getEtat() == 0 || currentDctap.getEtat() == 4
-				|| currentDctap.getEtat() > 1023) {
+		if (currentDctap.isCreatedOrUpdatedByEleve()
+				|| currentDctap.isUpdatedByProf()) {
 			// valorise le bean de vue avec le dctap courant
 			dctap.setId(currentDctap.getId()); // en provenance d'un champ caché
 			dctap.setDateAction(currentDctap.getDateAction());
@@ -68,15 +70,34 @@ public class ProfInterController {
 		User me = UtilSession.getUserInSession();
 		model.addAttribute("listdctaps", manager.getAllDVCTAPByProfInterv(me));
 		Long id = me.getId();
-		model.addAttribute("etat0", manager.getAllDVCTAPByEtat(0, id));
-		model.addAttribute("etat1", manager.getAllDVCTAPByEtat(1, id));
-		model.addAttribute("etat2", manager.getAllDVCTAPByEtat(2, id));
-		model.addAttribute("etat4", manager.getAllDVCTAPByEtat(4, id));
+		List<DemandeValidationConsoTempsAccPers> listDvctap = manager
+				.getAllDVCTAPByProfInterv(me);
+		int nbCreatedOrUpdatedByEleve = 0;
+		int nbUpdatedByProf = 0;
+		int nbValidated = 0;
+		int nbRefusedByProf = 0;
+		int nbRefusedByEleve = 0;
+		for (DemandeValidationConsoTempsAccPers dctap : listDvctap) {
+			if (dctap.isCreatedOrUpdatedByEleve() && !(dctap.isDvctapFinal())
+					&& !(dctap.isUpdatedByProf()))
+				nbCreatedOrUpdatedByEleve++;
+			else if (dctap.isUpdatedByProf() && !(dctap.isDvctapFinal()))
+				nbUpdatedByProf++;
+			else if ((dctap.isDvctapFinal())
+					&& (dctap.isValidatedByProf() || dctap.isValidatedByEleve()))
+				nbValidated++;
+			else if (dctap.isDvctapFinal() && dctap.isRefusedByProf())
+				nbRefusedByProf++;
+			else if (dctap.isDvctapFinal() && dctap.isRefusedByEleve())
+				nbRefusedByEleve++;
 
-		model.addAttribute("etat16", manager.getAllDVCTAPByEtat(16, id));
-		model.addAttribute("etat32", manager.getAllDVCTAPByEtat(32, id));
-		model.addAttribute("etat64", manager.getAllDVCTAPByEtat(64, id));
-		model.addAttribute("etatsup1000", manager.getAllDVCTAPModifByEtat(id));
+		}
+		model.addAttribute("nbCreatedOrUpdatedByEleve",
+				nbCreatedOrUpdatedByEleve);
+		model.addAttribute("nbUpdatedByProf", nbUpdatedByProf);
+		model.addAttribute("nbValidated", nbValidated);
+		model.addAttribute("nbRefusedByProf", nbRefusedByProf);
+		model.addAttribute("nbRefusedByEleve", nbRefusedByEleve);
 	}
 
 	@RequestMapping(value = "doedit", method = RequestMethod.POST)
@@ -105,7 +126,7 @@ public class ProfInterController {
 				dctapForUpdate.setDureeUpdatedByProf();
 			}
 			if (!dctapForUpdate.getAccPers().getNom().equals(accPersNom)
-					&& !dctapForUpdate.isAPUpdatedByProf()) {
+					&& !dctapForUpdate.isApUpdatedByProf()) {
 				dctapForUpdate.setAPUpdatedByProf();
 			}
 
@@ -124,13 +145,16 @@ public class ProfInterController {
 	public String refuseDCTAPById(@PathVariable String id, Model model) {
 		DemandeValidationConsoTempsAccPers dctap = manager.getDVCTAPById(Long
 				.valueOf(id));
-
+		System.out.println("je rentre");
 		// Test que la DCTAP appartient à la bonne personne
 		if (dctap.getProf().equals(UtilSession.getUserInSession())
-				&& (dctap.getEtat() == 0 || dctap.getEtat() == 4 || dctap
-						.getEtat() > 1023)) {
+				&& (dctap.isCreatedOrUpdatedByEleve() || dctap
+						.isUpdatedByProf())) {
 			dctap.setRefusedByProf();
+			System.out.println("deleted");
 			manager.updateDVCTAP(dctap);
+		} else {
+			System.out.println("erreur delete");
 		}
 
 		return "redirect:/app/prof-intervenant/index";
@@ -143,7 +167,8 @@ public class ProfInterController {
 
 		// Test que la DCTAP appartient à la bonne personne
 		if (dctap.getProf().equals(UtilSession.getUserInSession())
-				&& (dctap.getEtat() == 0 || dctap.getEtat() == 4)) {
+				&& (dctap.isCreatedOrUpdatedByEleve())
+				&& !(dctap.isDvctapFinal())) {
 			dctap.setValidatedByProf();
 			manager.updateDVCTAP(dctap);
 		}

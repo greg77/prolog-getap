@@ -1,7 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page import="org.ldv.sio.getap.app.service.impl.DBManagerGeTAP"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <h3 class="titre3">Mes demandes de validations</h3>
 
@@ -16,17 +17,22 @@
 	<c:set var="timeAtt" value="0" />
 	<table class="legend2">
 		<tr>
-			<td><img src="../../images/valid.png" width="24" height="24"/> : Confirmer</td>
-			<td><img src="../../images/modif.png" width="24" height="24"/> : Modifier</td>
-			<td><img src="../../images/suppr.png" width="24" height="24"/> : Supprimer</td>
-			<td><img src="../../images/refuseModif.png" width="24" height="24"/> : Rejeter</td>
+			<td><img src="../../images/valid.png" width="24" height="24" />
+				: Confirmer</td>
+			<td><img src="../../images/modif.png" width="24" height="24" />
+				: Modifier</td>
+			<td><img src="../../images/suppr.png" width="24" height="24" />
+				: Supprimer</td>
+			<td><img src="../../images/refuseModif.png" width="24"
+				height="24" /> : Rejeter</td>
 		</tr>
 	</table>
 	<h5 style="position: relative; top: 35px;">Demandes de validation
 		en cours</h5>
 	<div id="accordion">
 		<h3>
-			<a href="#">Demandes non traitées (${etat0 + etat4})</a>
+		<c:set var="count" value="0" scope="page" />
+			<a href="#">Demandes non traitées (${nbCreatedOrUpdatedByEleve} )</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -41,16 +47,18 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
+				
+					<c:forEach items="${mesdctaps}" var="dctap" >
+						<c:if
+							test="${dctap.createdOrUpdatedByEleve && !(dctap.dvctapFinal) && !(dctap.updatedByProf)}">
+							
 							<tr>
 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 								<td>${dctap.dateAction}</td>
 								<td><fmt:formatNumber
 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
 										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
+										value="${dctap.minutes%60}" pattern="#00" /></td>
 								<td>${dctap.accPers.nom}</td>
 								<td><a
 									href="<c:url value="/app/eleve/edit?id=${dctap.id}" />"><img
@@ -58,7 +66,7 @@
 										onmouseover="this.src='../../images/modifHover.png';"
 										onmouseout="this.src='../../images/modif.png';" /> </a></td>
 								<td><a
-									href="<c:url value="/app/eleve/delete/${dctap.id}" />"><img
+									href="#"  onclick="if(confirm('Voulez-vous vraiment annuler cette demande ?')){window.location.href='delete/${dctap.id}';}"><img
 										src="../../images/suppr.png" width="24" height="24"
 										onmouseover="this.src='../../images/supprHover.png';"
 										onmouseout="this.src='../../images/suppr.png';" /> </a></td>
@@ -69,7 +77,7 @@
 			</table>
 		</div>
 		<h3>
-			<a href="#">Demandes modifiées par le professeur (${etatsup1000})</a>
+			<a href="#">Demandes modifiées par le professeur (${nbUpdatedByProf})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -84,51 +92,48 @@
 					</tr>
 				</thead>
 				<tbody>
-<%-- 					<c:forEach items="${mesdctaps}" var="dctap"> --%>
-<%-- 						<c:if test="${dctap.etat > 1023}"> --%>
-<!-- 							<tr> -->
-<%-- 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td> --%>
-<%-- 								<c:if test="${dctap.dateModifiee}"> --%>
-<%-- 									<td class="isUpdate">${dctap.dateAction}</td> --%>
-<%-- 								</c:if> --%>
-<%-- 								<c:if test="${!dctap.dateModifiee}"> --%>
-<%-- 									<td>${dctap.dateAction}</td> --%>
-<%-- 								</c:if> --%>
-<%-- 								<c:if test="${dctap.dureeModifiee}"> --%>
-<%-- 									<td class="isUpdate"><fmt:formatNumber --%>
-<%-- 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
-<%-- 										pattern="#00" />h<fmt:formatNumber --%>
-<%-- 										value="${dctap.minutes%60}" --%>
-<%-- 										pattern="#00" /></td> --%>
-<%-- 								</c:if> --%>
-<%-- 								<c:if test="${!dctap.dureeModifiee}"> --%>
-<%-- 									<td><fmt:formatNumber --%>
-<%-- 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" --%>
-<%-- 										pattern="#00" />h<fmt:formatNumber --%>
-<%-- 										value="${dctap.minutes%60}" --%>
-<%-- 										pattern="#00" /></td> --%>
-<%-- 								</c:if> --%>
-<%-- 								<c:if test="${dctap.apModifiee}"> --%>
-<%-- 									<td class="isUpdate">${dctap.accPers.nom}</td> --%>
-<%-- 								</c:if> --%>
-<%-- 								<c:if test="${!dctap.apModifiee}"> --%>
-<%-- 									<td>${dctap.accPers.nom}</td> --%>
-<%-- 								</c:if> --%>
-<!-- 								<td><a -->
-<%-- 									href="<c:url value="/app/eleve/valid/${dctap.id}" />"><img --%>
-<!-- 										src="../../images/valid.png" width="24" height="24" -->
-<!-- 										onmouseover="this.src='../../images/validHover.png';" -->
-<!-- 										onmouseout="this.src='../../images/valid.png';" /> </a> -->
-<!-- 								</td> -->
-<!-- 								<td><a -->
-<%-- 									href="<c:url value="/app/eleve/refuse/${dctap.id}" />"><img --%>
-<!-- 										src="../../images/refuseModif.png" width="24" height="24" -->
-<!-- 										onmouseover="this.src='../../images/refuseModifHover.png';" -->
-<!-- 										onmouseout="this.src='../../images/refuseModif.png';" /> </a> -->
-<!-- 								</td> -->
-<!-- 							</tr> -->
-<%-- 						</c:if> --%>
-<%-- 					</c:forEach> --%>
+					<c:forEach items="${mesdctaps}" var="dctap">
+						<c:if test="${dctap.updatedByProf && !(dctap.dvctapFinal)}">
+							<tr>
+								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
+								<c:if test="${dctap.dateUpdatedByProf}">
+									<td class="isUpdate">${dctap.dateAction}</td>
+								</c:if>
+								<c:if test="${!dctap.dateUpdatedByProf}">
+									<td>${dctap.dateAction}</td>
+								</c:if>
+								<c:if test="${dctap.dureeUpdatedByProf}">
+									<td class="isUpdate"><fmt:formatNumber
+											value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
+											pattern="#00" />h<fmt:formatNumber
+											value="${dctap.minutes%60}" pattern="#00" /></td>
+								</c:if>
+								
+								<c:if test="${!dctap.dureeUpdatedByProf}"> --%>
+									<td><fmt:formatNumber	value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}" 
+																					pattern="#00" />h<fmt:formatNumber
+																					value="${dctap.minutes%60}"
+																					pattern="#00" /></td>
+																			</c:if>
+																			<c:if test="${dctap.apUpdatedByProf}">
+																				<td class="isUpdate">${dctap.accPers.nom}</td>
+								</c:if>
+								<c:if test="${!dctap.apUpdatedByProf}">
+									<td>${dctap.accPers.nom}</td>
+								</c:if>
+								<td><a
+									href="<c:url value="/app/eleve/valid/${dctap.id}" />"><img
+										src="../../images/valid.png" width="24" height="24"
+										onmouseover="this.src='../../images/validHover.png';"
+										onmouseout="this.src='../../images/valid.png';" /> </a></td>
+								<td><a
+									href="<c:url value="/app/eleve/refuse/${dctap.id}" />"><img
+										src="../../images/refuseModif.png" width="24" height="24"
+										onmouseover="this.src='../../images/refuseModifHover.png';"
+										onmouseout="this.src='../../images/refuseModif.png';" /> </a></td>
+							</tr>
+						</c:if>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>
@@ -136,7 +141,7 @@
 	<h5>Demandes terminées</h5>
 	<div id="accordion2">
 		<h3>
-			<a href="#">Demandes validées (${etat1 + etat32})</a>
+			<a href="#">Demandes validées (${nbValidated})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -150,15 +155,15 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 1 or dctap.etat == 32 }">
+						<c:if
+							test="${(dctap.dvctapFinal) && (dctap.validatedByProf || dctap.validatedByEleve) }">
 							<tr>
 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 								<td>${dctap.dateAction}</td>
 								<td><fmt:formatNumber
 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
 										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
+										value="${dctap.minutes%60}" pattern="#00" /></td>
 								<td>${dctap.accPers.nom}</td>
 							</tr>
 						</c:if>
@@ -167,7 +172,7 @@
 			</table>
 		</div>
 		<h3>
-			<a href="#">Demandes refusées par le professeur (${etat64})</a>
+			<a href="#">Demandes refusées par le professeur (${nbRefusedByProf})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -181,15 +186,14 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 64 }">
+						<c:if test="${dctap.dvctapFinal && dctap.refusedByProf}">
 							<tr>
 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 								<td>${dctap.dateAction}</td>
 								<td><fmt:formatNumber
 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
 										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
+										value="${dctap.minutes%60}" pattern="#00" /></td>
 								<td>${dctap.accPers.nom}</td>
 							</tr>
 						</c:if>
@@ -198,7 +202,7 @@
 			</table>
 		</div>
 		<h3>
-			<a href="#">Vos demandes refusées (${etat2})</a>
+			<a href="#">Vos demandes refusées (${nbRefusedByEleve})</a>
 		</h3>
 		<div id="demo">
 			<table class="display dataTable">
@@ -212,15 +216,14 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${mesdctaps}" var="dctap">
-						<c:if test="${dctap.etat == 2}">
+						<c:if test="${dctap.dvctapFinal && dctap.refusedByEleve}">
 							<tr>
 								<td>${dctap.prof.nom} ${dctap.prof.prenom}</td>
 								<td>${dctap.dateAction}</td>
 								<td><fmt:formatNumber
 										value="${(dctap.minutes/60)-((dctap.minutes%60)/60)}"
 										pattern="#00" />h<fmt:formatNumber
-										value="${dctap.minutes%60}"
-										pattern="#00" /></td>
+										value="${dctap.minutes%60}" pattern="#00" /></td>
 								<td>${dctap.accPers.nom}</td>
 							</tr>
 						</c:if>
@@ -229,7 +232,7 @@
 			</table>
 		</div>
 	</div>
-		<c:forEach items="${mesdctaps}" var="dctap">
+	<c:forEach items="${mesdctaps}" var="dctap">
 		<c:set var="timeTT" value="${timeTT + dctap.minutes}" />
 		<c:if test="${dctap.etat == 1 || dctap.etat == 32 }">
 			<c:set var="timeVal" value="${timeVal + dctap.minutes}" />
@@ -246,7 +249,8 @@
 			<c:set var="timeAtt" value="${timeAtt + dctap.minutes}" />
 		</c:if>
 	</c:forEach>
-	<br><br>
+	<br>
+	<br>
 	<h5>Statistiques</h5>
 	<div id="accordion3">
 		<h3>
