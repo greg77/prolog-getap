@@ -313,8 +313,7 @@ public class DemandeValidationConsoTempsAccPers {
 	 */
 
 	public void setRefusedByProf() throws DVCTAPException {
-		if (this.isCreatedOrUpdatedByEleve() && !(this.isDvctapFinal())
-				&& !(this.isUpdatedByProf())) {
+		if (this.isCreatedOrUpdatedByEleve() && !(this.isDvctapFinal())) {
 			this.etat = this.etat | DVCTAP_REFUSEE_PAR_PROF;
 			logger.info("refusée par prof : " + this.toString());
 		} else {
@@ -597,7 +596,7 @@ public class DemandeValidationConsoTempsAccPers {
 		Boolean bool = (this.isDateUpdatedByProf()
 				|| this.isDureeUpdatedByProf() || this.isApUpdatedByProf());
 
-		// System.out.println("updated par prof:"+bool);
+		System.out.println("updated par prof:" + bool);
 		return bool;
 	}
 

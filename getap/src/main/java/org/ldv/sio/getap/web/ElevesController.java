@@ -48,10 +48,11 @@ public class ElevesController {
 	@RequestMapping(value = "mesdctap", method = RequestMethod.GET)
 	public String mesdctap(Model model) {
 		User me = UtilSession.getUserInSession();
-		model.addAttribute("mesdctaps", manager.getAllDVCTAPByEleve(me));
-		Long id = me.getId();
 		List<DemandeValidationConsoTempsAccPers> listDvctap = manager
 				.getAllDVCTAPByEleve(me);
+		model.addAttribute("mesdctaps", listDvctap);
+		Long id = me.getId();
+
 		int nbCreatedOrUpdatedByEleve = 0;
 		int nbUpdatedByProf = 0;
 		int nbValidated = 0;
@@ -212,13 +213,6 @@ public class ElevesController {
 			} else {
 				manager.addAP(acc);
 			}
-			// DemandeValidationConsoTempsAccPers dctap = new
-			// DemandeValidationConsoTempsAccPers(
-			// formAjout.getId(), manager.getCurrentAnneeScolaire(),
-			// formAjout.getDate(), formAjout.getMinutes(),
-			// manager.getUserById(formAjout.getProfId()), acc,
-			// manager.getUserById(formAjout.getEleveId()),
-			// formAjout.getEtat());
 			DemandeValidationConsoTempsAccPers dctap = new DemandeValidationConsoTempsAccPers();
 			dctap.setId(formAjout.getId());
 			dctap.setAnneeScolaire(manager.getCurrentAnneeScolaire());

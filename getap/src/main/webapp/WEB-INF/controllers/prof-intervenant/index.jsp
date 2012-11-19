@@ -126,6 +126,7 @@
 					<tbody>
 						<c:forEach items="${listdctaps}" var="dctap">
 							<c:if test="${dctap.updatedByProf}">
+							<c:if test="${!(dctap.dvctapFinal)}">
 								<tr>
 									<td>${dctap.eleve.nom} ${dctap.eleve.prenom}</td>
 									<c:if test="${dctap.dateUpdatedByProf}">
@@ -164,6 +165,7 @@
 											onmouseout="this.src='../../images/suppr.png';" /> </a></td>
 									<td><input type="checkbox" name="ids" value="${dctap.id}" /></td>
 								</tr>
+							</c:if>
 							</c:if>
 						</c:forEach>
 					</tbody>
