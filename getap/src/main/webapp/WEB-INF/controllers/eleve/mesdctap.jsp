@@ -11,7 +11,7 @@
 </c:if>
 
 <c:if test="${not empty mesdctaps}">
-	<c:set var="timeTT" value="0" />
+	<c:set var="timeTT" value="0" /> 
 	<c:set var="timeVal" value="0" />
 	<c:set var="timeRef" value="0" />
 	<c:set var="timeAtt" value="0" />
